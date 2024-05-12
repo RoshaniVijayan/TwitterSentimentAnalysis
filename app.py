@@ -1,33 +1,13 @@
-
 # Import necessary libraries
 import streamlit as st
 import pickle
 import time
-import requests
-
-# Define function to download model file from Google Drive
-def download_model_file_from_google_drive(file_id, file_name):
-    url = "https://drive.google.com/uc?id=" + file_id
-    response = requests.get(url)
-    with open(file_name, "wb") as file:
-        file.write(response.content)
 
 # Define the app title
 st.title('Twitter Sentiment Analysis')
 
-# Define Google Drive file ID and model file name
-file_id = "1a3vNrSW5WVUgJzDoBMwjETerNZfsapC8"  # Google Drive file ID
+# Define the model file name
 model_file_name = "twitter_sentiment.pkl"
-
-# Download model file from Google Drive
-try:
-    download_model_file_from_google_drive(file_id, model_file_name)
-    st.success("Model file downloaded successfully.")
-except Exception as e:
-    st.error(f"Error downloading model file: {e}")
-
-    # Exit the app if downloading model fails
-    raise SystemExit("Downloading model file failed. Please check the file ID.")
 
 # Load the model
 try:
@@ -36,7 +16,6 @@ try:
     st.success("Model loaded successfully.")
 except Exception as e:
     st.error(f"Error loading model: {e}")
-
     # Exit the app if model loading fails
     raise SystemExit("Model loading failed. Please check the model file.")
 
