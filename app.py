@@ -1,38 +1,45 @@
-# Import necessary libraries
 import streamlit as st
 import pickle
-import time
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Define the app title
-st.title('Twitter Sentiment Analysis')
+# Load the trained model
+@st.cache(allow_output_mutation=True)
+def load_model(model_path):
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    return model
 
-# Define the model file name
-model_file_name = "twitter_sentiment.pkl"
+# Function to preprocess text
+def preprocess_text(text):
+    text = text.lower()
+    return text
 
-# Load the model
-try:
-    with open(model_file_name, 'rb') as model_file:
-        model = pickle.load(model_file)
-    st.success("Model loaded successfully.")
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-    # Exit the app if model loading fails
-    raise SystemExit("Model loading failed. Please check the model file.")
+# Function to predict sentiment
+def predict_sentiment(model, vectorizer, text):
+    text = preprocess_text(text)
+    text_vectorized = vectorizer.transform([text])
+    prediction = model.predict(text_vectorized)
+    return prediction[0]
 
-# Add a text input field for the user to input the tweet
-tweet = st.text_input('Enter your tweet')
+def main():
+    # Title of the app
+    st.title('Twitter Sentiment Analysis')
 
-# Add a button to submit the tweet for prediction
-submit = st.button('Predict')
+    # Text input for user to enter tweet
+    tweet = st.text_input('Enter your tweet')
 
-# When the user submits the tweet
-if submit:
-    # Measure prediction time
-    start = time.time()
-    # Predict the sentiment of the tweet
-    prediction = model.predict([tweet])
-    end = time.time()
-    # Display prediction time
-    st.write('Prediction time taken: ', round(end-start, 2), 'seconds')
-    # Display the predicted sentiment
-    st.write('Predicted Sentiment:', prediction[0])
+    # Button to predict sentiment
+    if st.button('Predict'):
+        # Load the model and vectorizer
+        model_path = "/content/TwitterSentimentAnalysis/twitter_sentiment.pkl"  # Update with the correct file path
+        model = load_model(model_path)
+        vectorizer = TfidfVectorizer()  # You may need to load the vectorizer used during training
+
+        # Make prediction
+        prediction = predict_sentiment(model, vectorizer, tweet)
+        
+        # Display prediction
+        st.write('Predicted Sentiment:', prediction)
+
+if __name__ == '__main__':
+    main()
