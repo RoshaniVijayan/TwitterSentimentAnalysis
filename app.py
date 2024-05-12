@@ -3,7 +3,7 @@ import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Load the trained model
-@st.cache(allow_output_mutation=True)
+@st.cache_data(allow_output_mutation=True)
 def load_model(model_path):
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
@@ -31,9 +31,9 @@ def main():
     # Button to predict sentiment
     if st.button('Predict'):
         # Load the model and vectorizer
-        model_path = "/content/TwitterSentimentAnalysis/twitter_sentiment.pkl"  # Update with the correct file path
+        model_path = "/content/TwitterSentimentAnalysis/twitter_sentiment.pkl"  
         model = load_model(model_path)
-        vectorizer = TfidfVectorizer()  # You may need to load the vectorizer used during training
+        vectorizer = TfidfVectorizer()  
 
         # Make prediction
         prediction = predict_sentiment(model, vectorizer, tweet)
